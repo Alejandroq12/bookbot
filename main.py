@@ -1,28 +1,48 @@
-def main(file_path):
-    print(f"--- Begin report for {file_path} ---")
-    with open(file_path) as file_object:
-        file_contents = file_object.read()
-        return file_contents
+def main():
+    book_path = "books/frankenstein.txt"
+    text = get_text_book(book_path)
+    num_words = get_num_words(text)
+    chars_dict = get_chars_dict(text)
+    chars_sorted_list = chars_dict_to_sorted_list(chars_dict)
 
-def count_words():
-    book_content = main('books/frankenstein.txt')
-    words = len(book_content.split())
-    print(words, 'words found in the document')
+    print(f"--- begin report fo {book_path} ---")
+    print(f"{num_words} words found in the document")
+    print()
+    for item in chars_sorted_list:
+        if not item["char"].isalpha():
+            continue
+        print(f"The '{item['char']}' character was found {item['num']} times")
+    print("--- End report ---")
 
-def count_caracters():
-    my_string = main('books/frankenstein.txt')
-    lowered_string = my_string.lower()
-    characters = {'a': 0, 'b': 0, 'c': 0, 'd': 0, 'e': 0, 'f': 0, 'g': 0, 'h': 0, 'i': 0, 'j': 0, 'k': 0, 'l': 0, 'm': 0, 'n': 0, 'o': 0, 'p': 0, 'q': 0, 'r': 0, 's': 0, 't': 0, 'u': 0, 'v': 0, 'w': 0, 'x': 0, 'y': 0, 'z': 0}
+
+def get_num_words(text):
+    words = text.split()
+    return len(words)
+
+def sort_on(d):
+    return d["num"]
+
+def chars_dict_to_sorted_list(num_chars_dict):
+    sorted_list = []
+
+    for ch in num_chars_dict:
+        sorted_list.append({"char": ch, "num": num_chars_dict[ch]})
+    sorted_list.sort(reverse=True, key=sort_on)
+    return sorted_list
+
+def get_chars_dict(text):
+    chars = {}
+    for c in text:
+        lowered = c.lower()
+        if lowered in chars:
+            chars[lowered] += 1
+        else:
+            chars[lowered] = 1
+    return chars
     
-    for word in lowered_string:
-          if word in characters:
-              characters[word] +=1
 
-    sorted_characters = sorted(characters.items(), key=lambda item: item[1], reverse=True)
+def get_text_book(path):
+    with open(path) as f:
+        return f.read()
 
-    for word, count in sorted_characters:
-        print(f'The character "{word}" was found {count} times')  
-
-count_words()
-print()
-count_caracters()
+main()
